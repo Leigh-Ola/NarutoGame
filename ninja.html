@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html> 
+<head>
+	<title>OOP Project: Ninja Game</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+	<style type="text/css">
+	body{	background: #a0a0a0;	}
+	input:hover, input:active{
+		outline: none;
+	}
+	
+	#title{
+		position: fixed; z-index: 9;
+		top: 0%; left: 0%; width: 100%;
+		padding: 11px 0px; font-size:2em;
+		background: lightgreen;
+		background: -webkit-linear-gradient(top, grey, rgba(0, 0, 0, 0));
+	}
+	
+	/*the box for alerting the user & getting input*/
+	div.inform{
+		width: 300px; max-height: 300px;
+		position: fixed; padding: 15px;
+		box-sizing:border-box;
+		overflow-y: scroll;
+		left: calc(50% - 150px);
+		z-index: 10; display: block;
+		bottom: calc(50% - 75px);
+		background: lightgreen; 
+		box-shadow: 0px 0px 30px #333;
+	}
+	div.inform > span > center{
+		display: block; font-size: 1.3em;
+		font-weight: bold; 
+	}
+	div.inform > em{
+		display:block; text-align:center;
+		font-size:1.18em;
+		color: rgba(0,0,0,.9);
+		font-style:normal;
+		margin-top: 12px;
+	}
+	div.inform input, div.inform > span{
+		display: block;
+	}
+	div.inform input{
+		margin-top: 7px; width: 100%;
+		padding: 5px; border-radius: 7px;
+		box-sizing:border-box;
+		height: 2.6em; outline: none;
+		border: 1px solid green;
+	}
+	div.inform > ins{
+		text-decoration: none;
+		margin-top: 7px; display: block;
+		height: 2.6em; position:relative;
+		line-height: 2.6em;
+	}
+	div.inform > ins span{
+		position: absolute; height: 100%;
+		background: lightskyblue;
+		padding-left: 8px; left: 0px;
+		box-sizing:border-box; top: 0%;
+		width: 48%; text-align: center;
+		font-size: 1.1em; display: block;
+	}
+	div.inform > ins span:last-child{
+		left: 51%;	}
+	div.inform > ins span.sel::after{
+		position:absolute; content:" ";
+		height: 16px; width: 16px;
+		top: calc(50% - 8px);
+		border-radius: 50%; left: 12px;
+		border: 1px solid lightgreen;
+		background: black;
+	}
+	
+	/*box for notificatiins*/
+	.notif{
+		display: block; padding: 9px;
+		position: absolute; z-index: 3;
+		min-width: 74%; left: 13%;
+		box-sizing:border-box;
+		text-align:center; opacity: 0;
+		border-radius: 15px;
+		background: #bbb; top: 0%;
+	}
+	
+	/*top box for stats*/
+	div.stats{
+		position:absolute; z-index:2;
+		height: 33%; max-height: 120px;
+		padding-bottom: 15px;
+		display: none;
+		width: 100%; left: 0%; top: 0%;
+		background: linear-gradient(white 60%, rgba(250, 250, 250, 0));
+		background: -webkit-linear-gradient(white 60%, rgba(160, 160, 160, 0)); 
+		background: -ms-linear-gradient(white 60%, rgba(250, 250, 250, 0));
+		background: -o-linear-gradient(white 60%, rgba(250, 250, 250, 0));
+		background: -moz-linear-gradient(white 60%, rgba(250, 250, 250, 0));
+	}
+	.stats > span{
+		display:block; width: 50%;
+		left:0%; top:0%; min-height: 70%;
+	}
+	.stats > span.lone{
+		width: 100%; font-size: 1.1em;
+	}
+	.stats > span:nth-child(2){
+		border-left: 6px double grey;
+		left:auto; right: 0px;
+		position:absolute; display: none;
+	}
+	.stats > span span, .stats > span b{
+		display: block; font-size: 1.3em;
+		text-align: center;  
+		}
+	.stats > span .health, .stats > span .chakra, .stats > span .strength{
+		font-size: 1em; 	}
+	.stats .health ins, .stats .chakra ins, .stats .strength ins{
+			text-decoration: none;
+			font-size: 1.1em;
+			color: #3300ff;
+		}
+		.stats > span .health i, .stats > span .chakra i, .stats > span .strength i{
+			color: red;
+		}
+	
+	/*main box*/
+	div.reportBox{
+		display: block; overflow:hidden;
+		position:absolute; left: 0%;
+		top: 0%; box-sizing:border-box;
+		padding: 5%; width: 100%;
+		height: 100%; max-height: 100%;
+		padding-bottom: 19vmin; z-index:1;
+	}
+	.reportBox .reports{
+		font-size: 100%; max-width: 100%;
+		overfow-x:hidden; display:block;
+		max-height: 100%; height: 100%;
+		display: flex; flex-wrap: wrap;
+		align-items: flex-end;
+		align-content: flex-end;
+		display:none;
+	}
+	.reports > span{
+		padding: 5px 0px; display: block;
+		box-sizing:border-box; 
+		text-align: center; width: 100%;
+		font-family: Helvetica;
+		flex-directon: column; 
+	}
+	.reports > span > ins{
+		text-decoration: none;
+	}
+	.reports > span > .badStrike{
+		color: #800000;
+	}
+	.reports > span > .goodStrike{
+		color: lightblue;
+		color: #000080;
+	}
+	.reports > span > small{
+		display: inline-block;
+		padding-left: 10px;
+		font-size: 0.7em;
+	}
+	.reports > span > .goodStrike+small{
+		color: green;
+	}
+	.reports > span > .badStrike+small{
+		color: red;
+	}
+	.reports > span em, .reports >span i{
+		color: #1010ff; font-weight: 600;
+	}
+	.reports > span i{
+		color: inherit;
+		opacity: 0.76;
+	}
+	.reports span b i.bold{
+		font-weight: 600;
+	}
+	.reports > span em:before{
+		position: relative; float: left;
+		content: " "; background: red;
+		padding: 3px; display: block;
+		border-radius: 50%; top: 3px;
+	}
+	
+	/*Bottom buttons*/
+	.reportBox .buttons{
+		position:absolute; bottom: 0%;
+		left: 0%; width: 100%;
+		height: 17vmin; z-index:2;
+		background:rgba(250,250,250,0.4);
+	}
+	.buttons .but{
+		width: calc(50% - 6px);
+		position:absolute; right: 50%;
+		background: red; display: block;
+		height: 100%; text-align: center;
+		right:calc(50% + 3px);
+		line-height: 17vmin;
+		font-size: 1.3em;
+		background: lightskyblue;
+	}
+	.buttons .but:first-child, .buttons .but:only-child{
+		right:3px;
+		background: lightgreen;
+	}
+	.buttons .but:only-child{
+		width: 100%; right: 0px;	}
+		
+	</style>
+</head>
+<body>
+	<center id="title">Life of a Ninja</center>
+	
+	<!--box for getting user input-->
+	<div class="inform">
+		<span><center>Provide Your Details</center></span>
+		<em>Name</em>
+		<input placeholder="First name only" ></input>
+		<em>Gender</em>
+		<ins>
+			<span class="sel">Male</span>
+			<span>Female</span>
+		</ins>
+	</div>
+
+	<!--box for displaying notifications-->
+	<div class="notif" >
+	</div>
+	
+	<!--box for displaying stats-->
+	<div class="stats">
+		<span class="me lone">
+			<b class="name">User</b>
+			<span class="strength"><ins>Strength : </ins>0</span>
+			<span class="health"><ins>Health : </ins>0/0</span>
+			<span class="chakra"><ins>Chakra : </ins>0/0</span>
+		</span>
+		<span class="foe">
+			<b class="name">Madara</b>
+			<span class="strength"><ins>Strength : </ins>0</span>
+			<span class="health"><ins>Health : </ins>0/0</span>
+			<span class="chakra"><ins>Chakra : </ins>0/0</span>
+		</span>
+	</div>
+	
+	<!--Box for displaying outcomes and commentary-->
+	<div class="reportBox">
+		<div class="reports">
+			<span>
+				Welcome, Shinobi.
+			</span>
+			<span>
+				You have an important mission : <br>Find and eliminate the members of the infamous Akatsuki gang.
+			</span>
+			<span class="rItem">
+				Are you ready?
+			</span>
+		</div>
+		
+		<!--Buttons for making choices-->
+		<div class="buttons">
+			<span class="but">Go!</span>
+		</div>
+	</div>
+</body>
+<script src="./libs/jquery3.2.1.min.js"></script>
+<script src="ninja.js"></script>
+<script type="text/javascript">
+
+function checkReports(txt){
+	var found = false
+	$(".reports span").each(function(){
+		if(($(this).text().toLowerCase().trim()).indexOf(txt.toLowerCase().trim()) >= 0){		found = true	}
+	});
+	return found
+}
+
+$("div.inform > ins span").click(function(){
+	$(this).addClass("sel").siblings().eq(0).removeClass("sel");
+});
+
+$(".buttons .but").first().one("click", function(){
+	$("#title").slideUp();
+	if($(".inform input").val().length >= 1){
+	    $(".stats .me .name").text($(".inform input").val().trim());
+    }else{
+    	$(".stats .me .name").text("User");
+   }
+	$(".reports").fadeIn(500).css("display","flex");
+	$(".stats").fadeIn(500);
+	$(".inform input").val("");
+	$(".inform").fadeOut(500);
+});
+
+
+</script>
+</html>
